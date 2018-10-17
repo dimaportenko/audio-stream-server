@@ -1,0 +1,15 @@
+{
+  "name": "youtube-audio-server",
+  "version": "1.0.0",
+  "description": "server for stream youtube audio",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Dmytro Portenko",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "youtube-audio-stream": "^0.2.0"
+  }
+}
