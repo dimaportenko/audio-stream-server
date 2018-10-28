@@ -1,16 +1,18 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+require('./services/passport');
 
-var mediaserver = require('mediaserver');
-
-var Downloader = require("./youtube/downloader");
-var dl = new Downloader();
-var i = 0;
+const app = express();
+require('./routes/authRoutes')(app);
 
 
+const mediaserver = require('mediaserver');
+
+const Downloader = require("./youtube/downloader");
+const dl = new Downloader();
+let i = 0;
 
 
-app.get('/download/:videoId', function (req, res) {
+app.get('/download/:videoId', (req, res) => {
   try {
     // youtubeStream(req.params.videoId).pipe(res);
     console.log('videoId', req.params.videoId);
@@ -27,11 +29,11 @@ app.get('/download/:videoId', function (req, res) {
   }
 });
 
-app.get('/track/:trackId', function(req, res){
+app.get('/track/:trackId', (req, res) => {
   console.log("./media/tracks/" + req.params.trackId);
   mediaserver.pipe(req, res, "./media/tracks/" + req.params.trackId);
 });
 
-app.listen(3005, () => {
-  console.log("App listening on port 3005!");
+app.listen(5000, () => {
+  console.log("App listening on port 5000!");
 });
