@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+var mediaserver = require('mediaserver');
+
 var Downloader = require("./youtube/downloader");
 var dl = new Downloader();
 var i = 0;
@@ -23,6 +25,11 @@ app.get('/download/:videoId', function (req, res) {
   } catch (exception) {
     res.status(500).send(exception)
   }
+});
+
+app.get('/track/:trackId', function(req, res){
+  console.log("./media/tracks/" + req.params.trackId);
+  mediaserver.pipe(req, res, "./media/tracks/" + req.params.trackId);
 });
 
 app.listen(3005, () => {
