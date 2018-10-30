@@ -1,8 +1,13 @@
 const express = require('express');
-require('./services/passport');
+const mongoose = require('mongoose');
+const config = require('./config/keys');
 
 const app = express();
 require('./routes/authRoutes')(app);
+
+mongoose.connect(config.mongoURI);
+require('./models/User');
+require('./services/passport');
 
 
 const mediaserver = require('mediaserver');
