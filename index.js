@@ -1,43 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 const config = require('./config/keys');
 
 const app = express();
+
+app.use(
+  cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    keys: [config.cookieKey],
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 require('./routes/authRoutes')(app);
+require('./routes/audioRoutes')(app);
 
 mongoose.connect(config.mongoURI);
 require('./models/User');
 require('./services/passport');
 
-
-const mediaserver = require('mediaserver');
-
-const Downloader = require("./youtube/downloader");
-const dl = new Downloader();
-let i = 0;
-
-
-app.get('/download/:videoId', (req, res) => {
-  try {
-    // youtubeStream(req.params.videoId).pipe(res);
-    console.log('videoId', req.params.videoId);
-    dl.getMP3({videoId: req.params.videoId, name: req.params.videoId}, function(err,res){
-      i++;
-      if(err)
-        throw err;
-      else{
-        console.log("Song "+ i + " was downloaded: " + res.file);
-      }
-    });
-  } catch (exception) {
-    res.status(500).send(exception)
-  }
-});
-
-app.get('/track/:trackId', (req, res) => {
-  console.log("./media/tracks/" + req.params.trackId);
-  mediaserver.pipe(req, res, "./media/tracks/" + req.params.trackId);
-});
 
 app.listen(5000, () => {
   console.log("App listening on port 5000!");
