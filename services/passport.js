@@ -22,21 +22,23 @@ passport.use(
       clientSecret: googleClientId.web.client_secret,
       callbackURL: '/auth/google/callback',
     },
-    (accessToken, refreshToken, profile, done) => {
-      const email = profile.emails.find(item => item.type === 'account');
-      console.log(email);
-      User.findOne({ email: email.value })
-        .then(user => {
-          if (user) {
-            done(null, user);
-          } else {
-            new User({
-              googleId: profile.id,
-              name: profile.displayName,
-              email: email.value,
-            }).save()
-              .then(newUser => done(null, newUser));
-          }
-        });
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email = profile.emails.find(item => item.type === 'account');
+        console.log(email);
+        const user = await User.findOne({ email: email.value });
+        if (user) {
+          done(null, user);
+        } else {
+          const newUser = await new User({
+            googleId: profile.id,
+            name: profile.displayName,
+            email: email.value,
+          }).save();
+          done(null, newUser);
+        }
+      } catch (e) {
+        console.log(e);
+      }
     })
 );
